@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="true" scan="true" scanPeriod = "60 seconds">
+
+    <property name="LOGS" value="/var/log/hello-world-app"/>
+ 	<property name="log_file_name" value="hello-world" />
+
+    <appender name="Console"
+        class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>
+                %d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M - %msg%n
+            </Pattern>
+        </layout>
+    </appender>
+ 
+    <appender name="RollingFile"
+        class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGS}/${log_file_name}.log</file>
+        <encoder
+            class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>%-30(%d{yyyy/MM/dd HH:mm:ss:SSS} [%thread]) %-5level %logger{32} - %msg%n</Pattern>
+        </encoder>
+ 
+        <rollingPolicy
+            class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily and when the file reaches 10 MegaBytes -->
+            <fileNamePattern>${LOGS}/archived/${log_file_name}-%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+     
+    <!-- LOG everything at INFO level -->
+    <root level="info">
+        <appender-ref ref="RollingFile" />
+    </root>
+ 
+    <!-- LOG "com.pwc.userprofile.api" at DEBUG level -->
+    <logger name="com.spring.helloWorld.api" level="DEBUG" additivity="false">
+        <appender-ref ref="RollingFile" />
+    </logger>
+    
+    <logger name="org.hibernate" level="INFO" additivity="false">
+        <appender-ref ref="RollingFile" />
+    </logger>
+
+    <logger name="log4j.logger.PROTOCOL_MESSAGE" level="DEBUG" additivity="false">
+        <appender-ref ref="RollingFile" />
+    </logger>
+
+</configuration>
